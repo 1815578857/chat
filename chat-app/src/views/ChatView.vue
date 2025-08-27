@@ -143,6 +143,9 @@ const loadHistory = async () => {
 const sendMessage = () => {
   if (!inputMessage.value.trim()) return
 
+  // 设置加载状态
+  isLoading.value = true
+
   // 先存储用户消息
   const userMsg = { sender: "user", content: inputMessage.value }
   messages.value.push(userMsg)
@@ -165,6 +168,12 @@ const sendMessage = () => {
     // 特殊处理结束信号
     if (event.data === '[DONE]') {
       eventSource.close()
+      // 取消加载状态
+      isLoading.value = false
+      // 流式结束后，重新获取历史数据以确保正确渲染
+      setTimeout(() => {
+        loadHistory()
+      }, 500) // 延迟500ms确保后端数据已保存
       return
     }
     
@@ -192,6 +201,8 @@ const sendMessage = () => {
   // 监听错误，关闭连接
   eventSource.onerror = () => {
     eventSource.close()
+    // 出错时也要取消加载状态
+    isLoading.value = false
   }
 }
 
