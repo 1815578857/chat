@@ -426,9 +426,9 @@ npm install
 
 ## 📞 联系方式
 
-- 项目作者：[Your Name]
-- 邮箱：[your.email@example.com]
-- 项目地址：[https://github.com/your-username/chat-system]
+- 项目作者：[shuishan]
+- 邮箱：[1815578857@qq.com]
+- 项目地址：[https://github.com/1815578857/chat]
 
 ## 📚 相关文档
 
@@ -439,16 +439,8 @@ npm install
 - [Spring Boot 官方文档](https://spring.io/projects/spring-boot)
 - [Ollama 官方文档](https://ollama.ai/)
 
-## 🎉 致谢
-
-感谢以下开源项目的支持：
-- Vue.js 团队
-- Spring Boot 团队
-- Element Plus 团队
-- Ollama 团队
-- MyBatis-Plus 团队
-
 ---
 
 **⭐ 如果这个项目对您有帮助，请不要忘记给个Star！**
+
 
