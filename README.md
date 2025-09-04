@@ -19,13 +19,13 @@
 
 ```
 ┌─────────────────┐     HTTP/SSE     ┌─────────────────┐     HTTP API    ┌─────────────────┐
-│   Vue 3 前端    │ ◄──────────────► │ Spring Boot后端  │ ◄─────────────► │   Ollama AI     │
-│ localhost:5173  │                  │ localhost:8080   │                  │ localhost:11434 │
+│   Vue 3 前端    │ ◄──────────────► │ Spring Boot后端 │ ◄─────────────► │   Ollama AI     │
+│ localhost:5173  │                  │ localhost:8080  │                 │ localhost:11434 │
 │                 │                  │                 │     SQL         │                 │
 │  - ChatView     │                  │ - Controller    │ ◄─────────────► │   MySQL DB      │
-│  - EventSource  │                  │ - Service       │                  │ localhost:3306  │
-│  - Element Plus │                  │ - MyBatis-Plus  │                  │                 │
-└─────────────────┘                  └─────────────────┘                  └─────────────────┘
+│  - EventSource  │                  │ - Service       │                 │ localhost:3306  │
+│  - Element Plus │                  │ - MyBatis-Plus  │                 │                 │
+└─────────────────┘                  └─────────────────┘                 └─────────────────┘
 ```
 
 ## 🚀 技术栈
@@ -451,3 +451,4 @@ npm install
 ---
 
 **⭐ 如果这个项目对您有帮助，请不要忘记给个Star！**
+
