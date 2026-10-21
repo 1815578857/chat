@@ -1,6 +1,6 @@
 package com.example.chat_back.service;
 
-import com.baomidou.mybatisplus.extension.service.IService;
+import com.baomidou.mybatisplus.spring.service.IService;
 import com.example.chat_back.entity.Message;
 
 
