@@ -1,42 +1,12 @@
-/*
- Navicat Premium Dump SQL
-
- Source Server         : localhost
- Source Server Type    : MySQL
- Source Server Version : 80023 (8.0.23)
- Source Host           : localhost:3306
- Source Schema         : chat_db
-
- Target Server Type    : MySQL
- Target Server Version : 80023 (8.0.23)
- File Encoding         : 65001
-
- Date: 25/08/2025 14:47:34
-*/
+-- Schema for the chat app (MySQL 8.0+)
+-- Usage: mysql -u root -p chat_db < chat_db.sql
 
 SET NAMES utf8mb4;
-SET FOREIGN_KEY_CHECKS = 0;
 
--- ----------------------------
--- Table structure for messages
--- ----------------------------
-DROP TABLE IF EXISTS `messages`;
-CREATE TABLE `messages`  (
+CREATE TABLE IF NOT EXISTS `messages` (
   `id` bigint NOT NULL AUTO_INCREMENT,
-  `sender` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-  `content` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `sender` varchar(50) NOT NULL COMMENT 'user or assistant',
+  `content` text NOT NULL,
   `created_at` datetime NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 13 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
-
--- ----------------------------
--- Records of messages
--- ----------------------------
-INSERT INTO `messages` VALUES (1, 'user', '你好', '2025-08-21 10:43:26');
-INSERT INTO `messages` VALUES (2, 'assistant', '<think>\n\n</think>\n\n你好！很高兴见到你。有什么我可以帮助你的吗？', '2025-08-21 10:43:30');
-INSERT INTO `messages` VALUES (3, 'user', '你是', '2025-08-21 13:40:22');
-INSERT INTO `messages` VALUES (4, 'assistant', '<think>\n\n</think>\n\n您好！我是由中国的深度求索（DeepSeek）公司开发的智能助手DeepSeek-R1。有关模型和产品的详细内容请参考官方文档。', '2025-08-21 13:40:26');
-INSERT INTO `messages` VALUES (5, 'user', '中医和西医的区别', '2025-08-21 15:08:24');
-INSERT INTO `messages` VALUES (6, 'assistant', '<think>\n嗯，我现在要了解一下中医和西医的区别。我记得之前学过一点，但具体细节不太清楚了。让我试着理清楚。\n\n首先，我应该分别回顾一下中医和西医的基本概念吧。中医是什么呢？听说它是一种理论，结合了自然和人体，强调阴阳平衡、脏腑关系等。而西医呢？是不是更注重现代医学的方法，比如手术、化学治疗等。\n\n那它们的原理有什么不同吗？我记得中医有“中”字，强调的是中庸之道，可能不需要很大的努力就能得到好的效果。而西医则是需要严格的步骤和化学手段来解决问题，可能会花更多时间。\n\n还有治什么人呢？中医应该治疗各种疾病，包括 invalidate、损伤的器官，比如心脏、骨骼之类的。西医的话，像脊柱问题可能要通过物理手法解决，而如果是复杂的生理问题或者心理因素导致的疾病，可能需要药物帮助。\n\n效果方面，中医有没有特殊的处理方法？听说有中药汤剂，通过组合不同的药物来达到特定的效果。而西医则是通过手术或其他治疗手段，但这些是否会对人体造成伤害呢？\n\n besides，中医有没有什么特别的地方？比如阴阳平衡、脏腑相合之类的理论，可能在现代医学中比较重要。\n\n还有，中医和西医的医生有什么不同吗？是不是中医用的是针灸等传统的针法，而西医则使用现代的手术刀？不过，中医有时候也可能进行手术或者其他治疗？\n\n那治疗方法上有什么区别呢？中医可能不需要复杂的医疗设备，可以用传统的方式解决问题。而西医可能需要更先进的设备来辅助诊断和治疗。\n\n还有，中医有没有传承或发展的空间？比如说，中医是不是可以融入一些现代医学的观点，形成新的理论？\n\n我还记得中医有很多经典理论，比如“伤寒论”，里面提到了很多具体的治疗方法。这可能在当今的医学中越来越被重视，特别是在慢性疾病管理方面。\n\n不过，西医虽然更注重科学，但也有自己的优势，比如更容易诊断和治疗复杂的疾病，特别是一些像癌症、糖尿病之类的，可能需要更专业的设备和方法。\n\n所以，两者结合起来是不是可以解决更多问题呢？比如对于某些慢性病，中医可能能提供基础治疗，而西医则可能通过手术或其他手段进一步改善。这样结合起来，可能会有更多的治疗选项，效果也可能更全面？\n\n不过，我不太确定这些点是否正确，需要再查资料或者请教有经验的医生。比如，关于中药的效果，有没有长期使用后仍然会出现副作用的情况？或者中医有没有某些特别需要注意的地方，不能随便乱用。\n\n另外，中医和西医的医疗设备有哪些区别呢？中医通常不需要复杂的手术设备，但可能需要一些传统技巧，比如针灸、推拿等。而西医则多依赖现代设备，如X光、MRI等，这些可能对身体造成伤害或者影响治疗效果。\n\n还有，中医在现代 medicine中的应用现状如何？听说在慢性病管理方面，中医有其独特的模式，可能在某些情况下比西医更有成效。\n\n总结一下，我大致了解了中医和西医的基本概念、原理、适用范围、治疗方法以及结合的情况。但还有一些细节我不太清楚，比如具体的理论、设备使用、效果的具体表现等等，还需要进一步学习或验证。\n</think>\n\n中医与西医的区别可以从多个角度进行分析：\n\n### 1. **基本概念与核心理念**\n   - **中医**：强调阴阳平衡、脏腑关系和中庸之道，注重整体健康。\n   - **西医**：以现代医学方法为核心，关注科学原理和疾病治疗。\n\n### 2. **治标治本的原则**\n   - **中医**：注重基础治疗，认为“上品”治之，“下品”反之。\n   - **西医**：强调精准诊断和个性化治疗，可能因人而异。\n\n### 3. **适用范围与治疗方法**\n   - **中医**：治疗多种疾病，包括慢性病、 invalidation and injury-related conditions。\n     - 包括但不限于心脏疾病、骨科问题等。\n   - **西医**：涵盖医学的广泛领域，如脊柱问题、神经系统健康、心理健康。\n\n### 4. **效果与处理方法**\n   - **中医**：可能通过中药汤剂或针灸等方式达到特定效果，无需复杂的设备。\n   - **西医**：可能依赖手术等现代手段，风险涉及器官损伤。\n\n### 5. **传承与发展**\n   - **中医**：有丰富的传统理论和传承空间，可以融入现代医学思想。\n   - **西医**：强调现代科学的严谨性和精准度。\n\n### 6. **医疗设备与区别**\n   - **中医**：通常无需复杂的设备，但可能需要传统技巧。\n   - **西医**：多依赖现代先进设备，可能导致身体不适或效果不佳。\n\n### 结论\n中医与西医在某些方面存在差异，如治标治本、适用范围及治疗方法等。两者结合使用可能带来更全面的治疗效果，特别是在慢性病管理方面。进一步学习和验证是了解这些细节的重要步骤。', '2025-08-21 15:09:15');
-
-SET FOREIGN_KEY_CHECKS = 1;
+  PRIMARY KEY (`id`)
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci;

@@ -1,6 +1,7 @@
 {
   "name": "chat-app",
   "version": "1.0.0",
+  "license": "MIT",
   "description": "Vue3 + Element Plus + Axios 聊天前端",
   "scripts": {
     "dev": "vite",

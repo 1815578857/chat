@@ -114,6 +114,10 @@ import {
 import userAvatar from '../assets/用户头像.png'
 import botAvatar from '../assets/机器人头像.png'
 import { marked } from 'marked'
+import DOMPurify from 'dompurify'
+
+// Backend address, configurable via chat-app/.env (VITE_API_BASE_URL)
+const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080'
 
 // 响应式数据
 const messages = ref([])
@@ -129,7 +133,7 @@ onMounted(() => {
 // 组件加载时获取历史聊天记录
 const loadHistory = async () => {
   try {
-    const response = await axios.get("http://localhost:8080/messages");
+    const response = await axios.get(`${API_BASE}/messages`);
     messages.value = response.data.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
     // 加载历史消息后滚动到底部显示最新消息
     await nextTick()
@@ -161,7 +165,7 @@ const sendMessage = () => {
   nextTick(() => scrollToBottom())
 
   // 使用 EventSource 流式接收数据
-  const eventSource = new EventSource(`http://localhost:8080/stream?prompt=${encodeURIComponent(userText)}`)
+  const eventSource = new EventSource(`${API_BASE}/stream?prompt=${encodeURIComponent(userText)}`)
 
   // 监听流式返回数据，拼接 AI 回复
   eventSource.onmessage = (event) => {
@@ -176,8 +180,6 @@ const sendMessage = () => {
       }, 500) // 延迟500ms确保后端数据已保存
       return
     }
-    
-    console.log('Token:', JSON.stringify(event.data))
     
     let token = event.data
     
@@ -222,9 +224,9 @@ const scrollToBottom = () => {
   }
 }
 
-// 渲染 Markdown 内容
+// 渲染 Markdown 内容（经 DOMPurify 清洗，防止模型输出中的 HTML 造成 XSS）
 const renderMarkdown = (content) => {
-  return marked(content)
+  return DOMPurify.sanitize(marked.parse(content || ''))
 }
 
 // 解析消息内容，分离 <think> 标签

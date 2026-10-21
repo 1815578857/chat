@@ -2,33 +2,41 @@ package com.example.chat_back.controller;
 
 import com.example.chat_back.entity.Message;
 import com.example.chat_back.service.IMessageService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.ai.ollama.OllamaChatModel;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-
 import org.springframework.http.codec.ServerSentEvent;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Flux;
 
-
-
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 /**
- * 聊天控制器
+ * Chat endpoints: history, streaming chat (SSE) and health check.
  */
 @RestController
-@RequestMapping("")
-@CrossOrigin(origins = "*") // 允许跨域访问
 public class MessageController {
 
-    @Autowired
-    private IMessageService messageService;
-    
-    @Autowired
-    private OllamaChatModel ollamaChatModel;
+    private static final Logger log = LoggerFactory.getLogger(MessageController.class);
+
+    private final IMessageService messageService;
+    private final OllamaChatModel ollamaChatModel;
+    private final int maxPromptLength;
+
+    public MessageController(IMessageService messageService,
+                             OllamaChatModel ollamaChatModel,
+                             @Value("${app.chat.max-prompt-length:4000}") int maxPromptLength) {
+        this.messageService = messageService;
+        this.ollamaChatModel = ollamaChatModel;
+        this.maxPromptLength = maxPromptLength;
+    }
 
     @GetMapping("/messages")
     public List<Message> getMessages() {
@@ -36,40 +44,38 @@ public class MessageController {
     }
 
     /**
-     * 流式聊天接口 - 参考实现
+     * Streams the model's answer token by token as Server-Sent Events,
+     * then persists both the prompt and the full answer.
      */
     @GetMapping(value = "/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public Flux<ServerSentEvent<String>> chat(@RequestParam String prompt) {
-        // 保存用户消息
-        Message userMsg = new Message("user", prompt);
-        messageService.save(userMsg);
-        
-        StringBuilder aiResponseBuilder = new StringBuilder();
-        
-        return ollamaChatModel.stream(prompt).map(token -> {
-            aiResponseBuilder.append(token);
-            System.out.println("Token: '" + token + "'"); // 调试输出每个token
-            return ServerSentEvent.builder(token).event("message").build();
-        }).concatWith(
-            Flux.just(ServerSentEvent.builder("[DONE]").event("message").build())
-        ).doOnComplete(() -> {
-            // 保存AI回复
-            Message aiMsg = new Message("assistant", aiResponseBuilder.toString());
-            messageService.save(aiMsg);
-            System.out.println("完整响应: " + aiResponseBuilder);
-        });
+        if (prompt == null || prompt.isBlank()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "prompt must not be blank");
+        }
+        if (prompt.length() > maxPromptLength) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "prompt exceeds " + maxPromptLength + " characters");
+        }
+
+        messageService.save(new Message("user", prompt));
+
+        StringBuilder answer = new StringBuilder();
+
+        return ollamaChatModel.stream(prompt)
+                .map(token -> {
+                    answer.append(token);
+                    return ServerSentEvent.builder(token).event("message").build();
+                })
+                .concatWith(Flux.just(ServerSentEvent.builder("[DONE]").event("message").build()))
+                .doOnComplete(() -> {
+                    messageService.save(new Message("assistant", answer.toString()));
+                    log.debug("Stream finished, {} chars", answer.length());
+                })
+                .doOnError(e -> log.warn("Stream failed: {}", e.getMessage()));
     }
 
-    /**
-     * 简单的健康检查接口
-     */
     @GetMapping("/health")
     public Map<String, Object> health() {
-        Map<String, Object> result = new HashMap<>();
-        result.put("status", "ok");
-        result.put("timestamp", System.currentTimeMillis());
-        return result;
+        return Map.of("status", "ok", "timestamp", System.currentTimeMillis());
     }
-
-
 }

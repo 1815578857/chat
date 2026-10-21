@@ -115,7 +115,7 @@ spring.ai.ollama.chat.model=deepseek-r1:1.5b
 # MySQL数据库配置
 spring.datasource.url=jdbc:mysql://localhost:3306/chat_db
 spring.datasource.username=root
-spring.datasource.password=root
+spring.datasource.password=${DB_PASSWORD}
 
 # MyBatis-Plus配置
 mybatis-plus.mapper-locations=classpath:/mapper/*.xml

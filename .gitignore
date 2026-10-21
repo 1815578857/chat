@@ -1,0 +1,14 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+target/
+
+# Local env / IDE
+.env
+.env.local
+*.local
+.idea/
+*.iml
+.DS_Store
