@@ -4,11 +4,29 @@ updates:
     directory: /chat-back
     schedule:
       interval: weekly
+    # Major upgrades (Spring Boot 4, Spring AI 2, ...) need code changes; do them by hand.
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
+    groups:
+      maven-minor-and-patch:
+        update-types: ["minor", "patch"]
+
   - package-ecosystem: npm
     directory: /chat-app
     schedule:
       interval: weekly
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
+    groups:
+      npm-minor-and-patch:
+        update-types: ["minor", "patch"]
+
   - package-ecosystem: github-actions
     directory: /
     schedule:
       interval: monthly
+    groups:
+      actions:
+        patterns: ["*"]
